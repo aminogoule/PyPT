@@ -122,6 +122,9 @@ celerybeat.pid
 # Environments
 .env
 .venv
+PyPT/
+credentials.json
+
 env/
 venv/
 ENV/
