@@ -1,4 +1,5 @@
 import httplib2
+import os
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -19,7 +20,8 @@ service = apiclient.discovery.build('sheets', 'v4', http = httpAuth) # Выби�
                                'gridProperties': {'rowCount': 100, 'columnCount': 15}}}]
 }).execute()
 '''
-spreadsheetId = '19yuiLWLOYVb1dOGIS_Mp8nadT4cc9SvAxpOBemo0qsU'
+#spreadsheetId = '19yuiLWLOYVb1dOGIS_Mp8nadT4cc9SvAxpOBemo0qsU'
+spreadsheetId = '1fXg3n9aszVP_CEzFKX4O6o1kJRdjiU39jwBldqzG7bE'
 #spreadsheet['spreadsheetId'] # сохраняем идентификатор файла
 print('https://docs.google.com/spreadsheets/d/' + spreadsheetId)
 
@@ -33,6 +35,7 @@ access = driveService.permissions().create(
 '''
 """================================================================================================================="""
 #add sheet to book
+'''
 results = service.spreadsheets().batchUpdate(
     spreadsheetId=spreadsheetId,
     body=
@@ -51,7 +54,42 @@ results = service.spreadsheets().batchUpdate(
             }
         ]
     }).execute()
+'''
+#=============================изменение данных и пакетное измененеие==================
+
+
+#=====================================================================================
+#по строчное чтение
+ranges = ["List_of!A1:L"]  #
+
+results = service.spreadsheets().values().batchGet(spreadsheetId=spreadsheetId,
+                                                   ranges=ranges,
+                                                   valueRenderOption='FORMATTED_VALUE',
+                                                   dateTimeRenderOption='FORMATTED_STRING').execute()
+sheet_values = results['valueRanges'][0]['values']
+#print(sheet_values)
+fd=open('output.txt',"a")
+
+for l1 in range(len(sheet_values)):
+    for l2 in range(len(sheet_values[l1])):
+        fd.write(sheet_values[l1][l2]+'; ')
+    fd.write('\n')
+
+
+#---------------------------------------------
+#открываем документ в который надо записать
+'''out_docum = '19yuiLWLOYVb1dOGIS_Mp8nadT4cc9SvAxpOBemo0qsU'
+print('https://docs.google.com/spreadsheets/d/' + out_docum + '<== output here')
+# make batch
+in_range=["result!A1:L"]
+
+r2 = service.spreadsheets().values().batchUpdate(spreadsheetId=out_docum,
+                                                   ranges=in_range,
+                                                   valueRenderOption='FORMATTED_VALUE',
+                                                   dateTimeRenderOption='FORMATTED_STRING').execute()'''
+
 #=================================================================================================================
+print('may be it done =))')
 # Получаем список листов, их Id и название
 spreadsheet = service.spreadsheets().get(spreadsheetId=spreadsheetId).execute()
 sheetList = spreadsheet.get('sheets')
