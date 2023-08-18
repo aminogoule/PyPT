@@ -61,7 +61,7 @@ results = service.spreadsheets().batchUpdate(
 #=====================================================================================
 #по строчное чтение
 ranges = ["List_of!A1:L"]  #
-
+out_docum = '19yuiLWLOYVb1dOGIS_Mp8nadT4cc9SvAxpOBemo0qsU'
 results = service.spreadsheets().values().batchGet(spreadsheetId=spreadsheetId,
                                                    ranges=ranges,
                                                    valueRenderOption='FORMATTED_VALUE',
@@ -70,15 +70,22 @@ sheet_values = results['valueRanges'][0]['values']
 #print(sheet_values)
 fd=open('output.txt',"a")
 
+
 for l1 in range(len(sheet_values)):
+   #fill res data each iteration of for loop
+    #row_data=[sheet_values[l1]]
+
+
     for l2 in range(len(sheet_values[l1])):
         fd.write(sheet_values[l1][l2]+'; ')
     fd.write('\n')
-
-
+row_data=sheet_values
+res = {"majorDimension": "ROWS","values": row_data}
+sheet=service.spreadsheets()
+sheet.values().append(spreadsheetId=out_docum,range='Лист1!A1',valueInputOption='USER_ENTERED',body=res).execute()
 #---------------------------------------------
 #открываем документ в который надо записать
-'''out_docum = '19yuiLWLOYVb1dOGIS_Mp8nadT4cc9SvAxpOBemo0qsU'
+'''
 print('https://docs.google.com/spreadsheets/d/' + out_docum + '<== output here')
 # make batch
 in_range=["result!A1:L"]
@@ -91,6 +98,11 @@ r2 = service.spreadsheets().values().batchUpdate(spreadsheetId=out_docum,
 #=================================================================================================================
 print('may be it done =))')
 # Получаем список листов, их Id и название
+#Prepare to insert and update data from one sheet to another
+
+
+#=================================================================================================================
+
 spreadsheet = service.spreadsheets().get(spreadsheetId=spreadsheetId).execute()
 sheetList = spreadsheet.get('sheets')
 for sheet in sheetList:
